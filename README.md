@@ -4,23 +4,54 @@ Open Weather client library. Minimal dependencies, minimal interface, complete s
 
 ## Code Example
 
+### Query samples
+
+#### Query by longitude and latitude
 ```csharp
 IOpenWeatherClient openWeatherClient = new OpenWeatherClient();
 
 var currentWeather = await openWeatherClient.GetCurrentWeather("apikeyapikeyapikeyapikey", 
-	22.021255f, 51.500319f)
+	longitude: 22.021255f, latitude: 51.500319f)
 
 var weatherForecast = await openWeatherClient.GetWeatherForecast5d3h("apikeyapikeyapikeyapikey", 
-	22.021255f, 51.500319f)
+	longitude: 22.021255f, latitude: 51.500319f)
 ```
+#### Query by city name
+```csharp
+IOpenWeatherClient openWeatherClient = new OpenWeatherClient();
 
-Complete interface is:
+var currentWeather = await openWeatherClient.GetCurrentWeather("apikeyapikeyapikeyapikey", 
+	cityNameCountryCode: "London, uk")
+
+var weatherForecast = await openWeatherClient.GetWeatherForecast5d3h("apikeyapikeyapikeyapikey", 
+	cityNameCountryCode: "London, uk")
+```
+#### Query by cityId
+```csharp
+IOpenWeatherClient openWeatherClient = new OpenWeatherClient();
+
+var currentWeather = await openWeatherClient.GetCurrentWeather("apikeyapikeyapikeyapikey", 
+	cityId: 2172797)
+
+var weatherForecast = await openWeatherClient.GetWeatherForecast5d3h("apikeyapikeyapikeyapikey", 
+	cityId: 2172797)
+```
+### Complete interface is:
 
 ```csharp
 public interface IOpenWeatherClient
 {
-	Task<CurrentWeather> GetCurrentWeather(string apiKey, float longitude, float latitude);
-	Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude, float latitude);
+    Task<CurrentWeather> GetCurrentWeather(
+        string apiKey, 
+        float longitude = float.NaN, float latitude = float.NaN, 
+        string cityNameCountryCode = null, 
+        int cityId = Int32.MinValue);
+
+    Task<WeatherForecast> GetWeatherForecast5d3h(
+        string apiKey, 
+        float longitude = float.NaN, float latitude = float.NaN, 
+        string cityNameCountryCode = null, 
+        int cityId = Int32.MinValue);
 }
 ```
 
@@ -38,7 +69,8 @@ Look at code example should be enough.
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+Tests are included in this release. However, you must provide apiKey in Const.cs file (you can
+obtain one free from Open Weather website).
 
 ## Contributors
 
