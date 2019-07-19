@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unidevel.OpenWeather", "src\Unidevel.OpenWeather\Unidevel.OpenWeather.csproj", "{344D5C16-5E5F-47F8-9B3E-158DEA0D8544}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Formal documents", "Formal documents", "{BB8697C1-4DEC-4EF7-9423-0F50A131CE99}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
