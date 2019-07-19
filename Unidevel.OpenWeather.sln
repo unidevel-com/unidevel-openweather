@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Formal documents", "Formal 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unidevel.OpenWeather.Tests", "test\Unidevel.OpenWeather.Tests\Unidevel.OpenWeather.Tests.csproj", "{13E94D98-00AB-4456-92A4-007740134ACB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{344D5C16-5E5F-47F8-9B3E-158DEA0D8544}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{344D5C16-5E5F-47F8-9B3E-158DEA0D8544}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{344D5C16-5E5F-47F8-9B3E-158DEA0D8544}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E94D98-00AB-4456-92A4-007740134ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E94D98-00AB-4456-92A4-007740134ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E94D98-00AB-4456-92A4-007740134ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E94D98-00AB-4456-92A4-007740134ACB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

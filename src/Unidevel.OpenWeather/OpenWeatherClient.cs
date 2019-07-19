@@ -6,9 +6,11 @@ namespace Unidevel.OpenWeather
 {
     public class OpenWeatherClient : IDisposable, IOpenWeatherClient
     {
-        public async Task<CurrentWeather> GetCurrentWeather(string apiKey, float longitude, float latitude)
+        public async Task<CurrentWeather> GetCurrentWeather(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
         {
-            var url = buildCurrentWeatherUrl(apiKey, longitude, latitude);
+            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+
+            var url = buildCurrentWeatherUrl(apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
             string currentWeatherJson;
             using (var webClient = new WebClient()) currentWeatherJson = await webClient.DownloadStringTaskAsync(url);
@@ -18,9 +20,11 @@ namespace Unidevel.OpenWeather
             return currentWeather;
         }
 
-        public async Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude, float latitude)
+        public async Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
         {
-            var url = buildWeatherForecast5d3hUrl(apiKey, longitude, latitude);
+            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+
+            var url = buildWeatherForecast5d3hUrl(apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
             string weatherForecastJson;
             using (var webClient = new WebClient()) weatherForecastJson = await webClient.DownloadStringTaskAsync(url);
@@ -37,10 +41,10 @@ namespace Unidevel.OpenWeather
 
         private string buildLocationPart(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
         {
-            if ((!float.IsNaN(longitude)) && (!float.IsNaN(latitude)))
+            if ((!float.IsNaN(longitude)) || (!float.IsNaN(latitude)))
             {
-                if (float.IsNaN(longitude)) throw new ArgumentException("Must not specified and not NaN when latitude provided.", nameof(longitude));
-                if (float.IsNaN(longitude)) throw new ArgumentException("Must not specified and not NaN when longitude provided.", nameof(latitude));
+                if (float.IsNaN(latitude)) throw new ArgumentException("Must be specified and not NaN when latitude provided.", nameof(longitude));
+                if (float.IsNaN(longitude)) throw new ArgumentException("Must be specified and not NaN when longitude provided.", nameof(latitude));
                 if (!String.IsNullOrWhiteSpace(cityNameCountryCode)) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityNameCountryCode));
                 if (cityId != Int32.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
 
