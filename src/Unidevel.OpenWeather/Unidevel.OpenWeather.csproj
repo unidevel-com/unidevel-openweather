@@ -3,12 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.0.1</Version>
-    <Authors>Unidevel.com Grzegorz Strzałkowski</Authors>
+    <Authors>Grzegorz Strzałkowski</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/unidevel-com/unidevel-openweather</PackageProjectUrl>
     <RepositoryUrl>https://github.com/unidevel-com/unidevel-openweather</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>openweather,weather,client,api</PackageTags>
+    <Company>Unidevel.com</Company>
+    <Description>Open Weather client library. Minimal dependencies, minimal interface, complete set of data and enumerations provided by Open Weather API.</Description>
+    <PackageReleaseNotes>Initial release extracted from home automation project.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ## Synopsis
 
-Open Weather client library 
+Open Weather client library. Minimal dependencies, minimal interface, complete set of data and enumerations provided by Open Weather API.
 
 ## Code Example
 
