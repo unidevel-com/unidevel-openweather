@@ -7,8 +7,11 @@ Open Weather client library
 ```csharp
 IOpenWeatherClient openWeatherClient = new OpenWeatherClient();
 
-var currentWeather = await openWeatherClient.GetCurrentWeather("apikeyapikeyapikeyapikey", 22.021255f, 51.500319f)
-var weatherForecast = await openWeatherClient.GetWeatherForecast5d3h("apikeyapikeyapikeyapikey", 22.021255f, 51.500319f)
+var currentWeather = await openWeatherClient.GetCurrentWeather("apikeyapikeyapikeyapikey", 
+	22.021255f, 51.500319f)
+
+var weatherForecast = await openWeatherClient.GetWeatherForecast5d3h("apikeyapikeyapikeyapikey", 
+	22.021255f, 51.500319f)
 ```
 
 Complete interface is:
@@ -17,7 +20,7 @@ Complete interface is:
 public interface IOpenWeatherClient
 {
 	Task<CurrentWeather> GetCurrentWeather(string apiKey, float longitude, float latitude);
-    Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude, float latitude);
+	Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude, float latitude);
 }
 ```
 
