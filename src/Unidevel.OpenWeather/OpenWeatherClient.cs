@@ -16,7 +16,7 @@ namespace Unidevel.OpenWeather
             _apiKey = configuration?.GetSection("OpenWeather")?["ApiKey"];
         }
 
-        public async Task<CurrentWeather> GetCurrentWeatherAsync(string apiKey = null, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        public async Task<CurrentWeather> GetCurrentWeatherAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
         {
             var url = buildCurrentWeatherUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
@@ -28,7 +28,7 @@ namespace Unidevel.OpenWeather
             return currentWeather;
         }
 
-        public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(string apiKey = null, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
         {
             var url = buildWeatherForecast5d3hUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 

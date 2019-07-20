@@ -30,9 +30,9 @@ namespace Unidevel.OpenWeather.Tests
             IOpenWeatherClient client = new OpenWeatherClient();
 
             WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                apiKey: Const.OpenWeatherApiKey,
                 longitude: Const.SampleLongitude,
-                latitude: Const.SampleLatitude);
+                latitude: Const.SampleLatitude,
+                apiKey: Const.OpenWeatherApiKey);
 
             Assert.NotNull(weatherForecast);
         }
@@ -43,8 +43,8 @@ namespace Unidevel.OpenWeather.Tests
             IOpenWeatherClient client = new OpenWeatherClient();
 
             WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                apiKey: Const.OpenWeatherApiKey,
-                cityNameCountryCode: Const.SampleCityNameCountryCode);
+                cityNameCountryCode: Const.SampleCityNameCountryCode,
+                apiKey: Const.OpenWeatherApiKey);
 
             Assert.NotNull(weatherForecast);
         }
@@ -55,8 +55,8 @@ namespace Unidevel.OpenWeather.Tests
             IOpenWeatherClient client = new OpenWeatherClient();
 
             var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                apiKey: Const.OpenWeatherApiKey,
-                cityId: Const.SampleCityId);
+                cityId: Const.SampleCityId,
+                apiKey: Const.OpenWeatherApiKey);
 
             Assert.NotNull(weatherForecast);
         }
@@ -69,8 +69,8 @@ namespace Unidevel.OpenWeather.Tests
                 IOpenWeatherClient client = new OpenWeatherClient();
 
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    apiKey: Const.OpenWeatherApiKey,
-                    longitude: Const.SampleLongitude);
+                    longitude: Const.SampleLongitude,
+                    apiKey: Const.OpenWeatherApiKey);
             });
         }
 
@@ -82,8 +82,8 @@ namespace Unidevel.OpenWeather.Tests
                 IOpenWeatherClient client = new OpenWeatherClient();
 
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    apiKey: Const.OpenWeatherApiKey,
-                    latitude: Const.SampleLatitude);
+                    latitude: Const.SampleLatitude,
+                    apiKey: Const.OpenWeatherApiKey);
             });
         }
 
@@ -95,10 +95,10 @@ namespace Unidevel.OpenWeather.Tests
                 IOpenWeatherClient client = new OpenWeatherClient();
 
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    apiKey: Const.OpenWeatherApiKey,
                     longitude: Const.SampleLongitude,
                     latitude: Const.SampleLatitude,
-                    cityNameCountryCode: Const.SampleCityNameCountryCode);
+                    cityNameCountryCode: Const.SampleCityNameCountryCode,
+                    apiKey: Const.OpenWeatherApiKey);
             });
         }
 
@@ -110,10 +110,10 @@ namespace Unidevel.OpenWeather.Tests
                 IOpenWeatherClient client = new OpenWeatherClient();
 
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    apiKey: Const.OpenWeatherApiKey,
                     longitude: Const.SampleLongitude,
                     latitude: Const.SampleLatitude,
-                    cityId: Const.SampleCityId);
+                    cityId: Const.SampleCityId,
+                    apiKey: Const.OpenWeatherApiKey);
             });
         }
 
@@ -125,9 +125,9 @@ namespace Unidevel.OpenWeather.Tests
                 IOpenWeatherClient client = new OpenWeatherClient();
 
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    apiKey: Const.OpenWeatherApiKey,
                     cityNameCountryCode: Const.SampleCityNameCountryCode,
-                    cityId: Const.SampleCityId);
+                    cityId: Const.SampleCityId,
+                    apiKey: Const.OpenWeatherApiKey);
             });
         }
     }

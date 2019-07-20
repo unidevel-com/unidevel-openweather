@@ -39,19 +39,17 @@ var weatherForecast = await openWeatherClient.GetWeatherForecast5d3hAsync(cityId
 ```csharp
 public interface IOpenWeatherClient
 {
-
-
     Task<CurrentWeather> GetCurrentWeatherAsync(
-        string apiKey = null, 
         float longitude = float.NaN, float latitude = float.NaN, 
         string cityNameCountryCode = null, 
-        int cityId = Int32.MinValue);
+        int cityId = Int32.MinValue,
+        string apiKey = null);
 
     Task<WeatherForecast> GetWeatherForecast5d3hAsync(
-        string apiKey = null, 
         float longitude = float.NaN, float latitude = float.NaN, 
         string cityNameCountryCode = null, 
-        int cityId = Int32.MinValue);
+        int cityId = Int32.MinValue,
+        string apiKey = null);
 }
 ```
 

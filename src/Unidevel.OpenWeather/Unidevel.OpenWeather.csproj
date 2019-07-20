@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.9.2</Version>
+    <Version>0.9.3</Version>
     <Authors>Grzegorz Strzałkowski</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/unidevel-com/unidevel-openweather</PackageProjectUrl>
@@ -12,7 +12,7 @@
     <Company>Unidevel.com</Company>
     <Description>Open Weather client library. Minimal dependencies, minimal interface, complete set of data and enumerations provided by Open Weather API.</Description>
     <PackageReleaseNotes>Added Async suffix to asynchronous methods (and no other are provided). Added possibility of configuration through IConfiguration interface - "OpenWeather:ApiKey" will be used as default key.</PackageReleaseNotes>
-    <AssemblyVersion>0.9.2.0</AssemblyVersion>
+    <AssemblyVersion>0.9.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
