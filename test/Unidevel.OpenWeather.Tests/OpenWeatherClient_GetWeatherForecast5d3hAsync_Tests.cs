@@ -1,22 +1,40 @@
+using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Unidevel.OpenWeather.Tests
 {
-    public class OpenWeatherClient_GetCurrentWeather_Tests
+    public class OpenWeatherClient_GetWeatherForecast5d3h_Tests
     {
+        [Fact]
+        public async Task ByLonLat_UseIConfiguration()
+        {
+            var config = new ConfigurationBuilder()
+                .AddInMemoryCollection(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("OpenWeather:ApiKey", Const.OpenWeatherApiKey) })
+                .Build();
+
+            IOpenWeatherClient client = new OpenWeatherClient(config);
+
+            WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                longitude: Const.SampleLongitude,
+                latitude: Const.SampleLatitude);
+
+            Assert.NotNull(weatherForecast);
+        }
+
         [Fact]
         public async Task ByLonLat()
         {
             IOpenWeatherClient client = new OpenWeatherClient();
 
-            CurrentWeather currentWeather = await client.GetCurrentWeather(
-                apiKey: Const.OpenWeatherApiKey, 
-                longitude: Const.SampleLongitude, 
+            WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                apiKey: Const.OpenWeatherApiKey,
+                longitude: Const.SampleLongitude,
                 latitude: Const.SampleLatitude);
 
-            Assert.NotNull(currentWeather);
+            Assert.NotNull(weatherForecast);
         }
 
         [Fact]
@@ -24,11 +42,11 @@ namespace Unidevel.OpenWeather.Tests
         {
             IOpenWeatherClient client = new OpenWeatherClient();
 
-            CurrentWeather currentWeather = await client.GetCurrentWeather(
+            WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
                 apiKey: Const.OpenWeatherApiKey,
                 cityNameCountryCode: Const.SampleCityNameCountryCode);
 
-            Assert.NotNull(currentWeather);
+            Assert.NotNull(weatherForecast);
         }
 
         [Fact]
@@ -36,11 +54,11 @@ namespace Unidevel.OpenWeather.Tests
         {
             IOpenWeatherClient client = new OpenWeatherClient();
 
-            var currentWeather = await client.GetCurrentWeather(
+            var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                 apiKey: Const.OpenWeatherApiKey,
                 cityId: Const.SampleCityId);
 
-            Assert.NotNull(currentWeather);
+            Assert.NotNull(weatherForecast);
         }
 
         [Fact]
@@ -50,7 +68,7 @@ namespace Unidevel.OpenWeather.Tests
             {
                 IOpenWeatherClient client = new OpenWeatherClient();
 
-                var currentWeather = await client.GetCurrentWeather(
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     apiKey: Const.OpenWeatherApiKey,
                     longitude: Const.SampleLongitude);
             });
@@ -63,7 +81,7 @@ namespace Unidevel.OpenWeather.Tests
             {
                 IOpenWeatherClient client = new OpenWeatherClient();
 
-                var currentWeather = await client.GetCurrentWeather(
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     apiKey: Const.OpenWeatherApiKey,
                     latitude: Const.SampleLatitude);
             });
@@ -76,7 +94,7 @@ namespace Unidevel.OpenWeather.Tests
             {
                 IOpenWeatherClient client = new OpenWeatherClient();
 
-                var currentWeather = await client.GetCurrentWeather(
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     apiKey: Const.OpenWeatherApiKey,
                     longitude: Const.SampleLongitude,
                     latitude: Const.SampleLatitude,
@@ -91,7 +109,7 @@ namespace Unidevel.OpenWeather.Tests
             {
                 IOpenWeatherClient client = new OpenWeatherClient();
 
-                var currentWeather = await client.GetCurrentWeather(
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     apiKey: Const.OpenWeatherApiKey,
                     longitude: Const.SampleLongitude,
                     latitude: Const.SampleLatitude,
@@ -106,7 +124,7 @@ namespace Unidevel.OpenWeather.Tests
             {
                 IOpenWeatherClient client = new OpenWeatherClient();
 
-                var currentWeather = await client.GetCurrentWeather(
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     apiKey: Const.OpenWeatherApiKey,
                     cityNameCountryCode: Const.SampleCityNameCountryCode,
                     cityId: Const.SampleCityId);

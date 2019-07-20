@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -6,11 +7,18 @@ namespace Unidevel.OpenWeather
 {
     public class OpenWeatherClient : IDisposable, IOpenWeatherClient
     {
-        public async Task<CurrentWeather> GetCurrentWeather(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
-        {
-            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+        private readonly IConfiguration _configuration;
+        private readonly string _apiKey;
 
-            var url = buildCurrentWeatherUrl(apiKey, longitude, latitude, cityNameCountryCode, cityId);
+        public OpenWeatherClient(IConfiguration configuration = null)
+        {
+            _configuration = configuration;
+            _apiKey = configuration?.GetSection("OpenWeather")?["ApiKey"];
+        }
+
+        public async Task<CurrentWeather> GetCurrentWeatherAsync(string apiKey = null, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        {
+            var url = buildCurrentWeatherUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
             string currentWeatherJson;
             using (var webClient = new WebClient()) currentWeatherJson = await webClient.DownloadStringTaskAsync(url);
@@ -20,11 +28,9 @@ namespace Unidevel.OpenWeather
             return currentWeather;
         }
 
-        public async Task<WeatherForecast> GetWeatherForecast5d3h(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(string apiKey = null, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
         {
-            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
-
-            var url = buildWeatherForecast5d3hUrl(apiKey, longitude, latitude, cityNameCountryCode, cityId);
+            var url = buildWeatherForecast5d3hUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
             string weatherForecastJson;
             using (var webClient = new WebClient()) weatherForecastJson = await webClient.DownloadStringTaskAsync(url);
@@ -35,9 +41,17 @@ namespace Unidevel.OpenWeather
 
         private static readonly IFormatProvider americanNumberFormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-US").NumberFormat;
 
-        private string buildCurrentWeatherUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue) => String.Format("http://api.openweathermap.org/data/2.5/weather?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+        private string buildCurrentWeatherUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        {
+            if (String.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+            return String.Format("http://api.openweathermap.org/data/2.5/weather?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+        }
 
-        private string buildWeatherForecast5d3hUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue) => String.Format("http://api.openweathermap.org/data/2.5/forecast?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+        private string buildWeatherForecast5d3hUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        {
+            if (String.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+            return String.Format("http://api.openweathermap.org/data/2.5/forecast?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+        }
 
         private string buildLocationPart(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
         {
