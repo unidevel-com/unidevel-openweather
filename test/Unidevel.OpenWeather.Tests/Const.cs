@@ -6,7 +6,7 @@ namespace Unidevel.OpenWeather.Tests
 {
     public class Const
     {
-        public const string OpenWeatherApiKey = "4ede6b3a7665e3553c79101aa85aedb5";
+        public const string OpenWeatherApiKey = "-- api key -- api key -- api key --";
 
         public const float SampleLongitude = 22.021255f;
         public const float SampleLatitude = 51.500319f;
