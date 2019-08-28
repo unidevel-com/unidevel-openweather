@@ -10,10 +10,10 @@ namespace Unidevel.OpenWeather
         private readonly IConfiguration _configuration;
         private readonly string _apiKey;
 
-        public OpenWeatherClient(IConfiguration configuration = null)
+        public OpenWeatherClient(IConfiguration configuration = null, string apiKey = null)
         {
             _configuration = configuration;
-            _apiKey = configuration?.GetSection("OpenWeather")?["ApiKey"];
+            _apiKey = apiKey ?? configuration?.GetSection("OpenWeather")?["ApiKey"];            
         }
 
         public async Task<CurrentWeather> GetCurrentWeatherAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
