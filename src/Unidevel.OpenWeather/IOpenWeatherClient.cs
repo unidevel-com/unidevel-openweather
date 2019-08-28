@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Unidevel.OpenWeather
 {
-    public interface IOpenWeatherClient
+    public interface IOpenWeatherClient: IDisposable
     {
         Task<CurrentWeather> GetCurrentWeatherAsync(
             float longitude = float.NaN,
