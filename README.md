@@ -73,7 +73,7 @@ using (IOpenWeatherClient openWeatherClient = new OpenWeatherClient(apiKey: "-- 
 ```
 ### Complete interface is:
 ```csharp
-public interface IOpenWeatherClient
+public interface IOpenWeatherClient: IDisposable
 {
     Task<CurrentWeather> GetCurrentWeatherAsync(
         float longitude = float.NaN, float latitude = float.NaN, 
