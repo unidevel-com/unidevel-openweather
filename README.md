@@ -15,16 +15,35 @@ provide apiKey directly to called methods. If provided, it will be preferred ove
 
 ### How to create instance
 
-Not ready, yet.
-
 #### Using parameterless constructor
-
+```csharp
+using (IOpenWeatherClient openWeatherClient = new OpenWeatherClient())
+{
+	// your code here, but each call must include apiKey parameter otherwise you'll get WebException with code 401
+}
+```
 #### Using constructor with API key
 
+```csharp
+using (IOpenWeatherClient openWeatherClient = new OpenWeatherClient(apiKey: "-- my api key --"))
+{
+	// your code here
+}
+```
 #### Using constructor with IConfiguration
+```csharp
+var config = new ConfigurationBuilder()
+	.AddInMemoryCollection(new KeyValuePair<string, string>[] // of course there are better providers, look at ConfigurationBuilder docs
+	{ 
+		new KeyValuePair<string, string>("OpenWeather:ApiKey", "-- my api key --") 
+	})
+    .Build();
 
-#### Using constructor with IConfiguration provided by Dependency Injection (Microsoft's extension classes)
-
+using (IOpenWeatherClient client = new OpenWeatherClient(config))
+{
+	// your code here
+}
+```
 ### Query samples
 
 #### Query by longitude and latitude
@@ -53,7 +72,6 @@ using (IOpenWeatherClient openWeatherClient = new OpenWeatherClient(apiKey: "-- 
 }
 ```
 ### Complete interface is:
-
 ```csharp
 public interface IOpenWeatherClient
 {
