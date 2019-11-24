@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.9.4</Version>
+    <Version>0.9.5</Version>
     <Authors>Grzegorz Strzałkowski</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/unidevel-com/unidevel-openweather</PackageProjectUrl>
@@ -11,11 +11,8 @@
     <PackageTags>openweather,weather,client,api</PackageTags>
     <Company>Unidevel.com</Company>
     <Description>Open Weather client library. Minimal dependencies, minimal interface, complete set of data and enumerations provided by Open Weather API.</Description>
-    <PackageReleaseNotes>
-        Added constructor with appKey configuration parameter. Can be used instead of IConfiguration, however IConfiguration is just a better idea.
-        Made IOpenWeatherClient IDisposable. Implementation may potentially use unmanaged resources (OpenWeatherClient doesn't, however it already implements IDisposable interface).
-    </PackageReleaseNotes>
-    <AssemblyVersion>0.9.4.0</AssemblyVersion>
+    <PackageReleaseNotes>Fixed: WeatherForecastItem was missing Weather property (important!)</PackageReleaseNotes>
+    <AssemblyVersion>0.9.5.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

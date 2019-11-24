@@ -2,7 +2,13 @@
 
 Open Weather client library. Minimal dependencies, minimal interface, complete set of data and enumerations provided by Open Weather API.
 
-## What's new in 0.9.4
+## What's new?
+
+### 0.9.5
+
+- Fixed: WeatherForecastItem was missing Weather property (important!)
+
+### 0.9.4
 
 - IOpenWeatherClient is now IDisposable (implementation already was)
 - ApiKey can be provided directly to constructor as a string, without using IConfiguration
