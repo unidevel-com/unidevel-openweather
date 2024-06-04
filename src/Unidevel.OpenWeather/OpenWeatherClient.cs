@@ -12,6 +12,8 @@ namespace Unidevel.OpenWeather
 
         public OpenWeatherClient(IConfiguration configuration = null, string apiKey = null)
         {
+            // Hello World, this is very important comment in this code
+
             _configuration = configuration;
             _apiKey = apiKey ?? configuration?.GetSection("OpenWeather")?["ApiKey"];            
         }
