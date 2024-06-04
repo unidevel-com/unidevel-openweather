@@ -9,7 +9,7 @@ namespace Unidevel.OpenWeather.Tests
         public const string OpenWeatherApiKey = "-- api key -- api key -- api key --";
 
         public const float SampleLongitude = 22.021255f;
-        public const float SampleLatitude = 51.500319f;
+        public const float SampleLatitude = 51.500019f;
 
         public const string SampleCityNameCountryCode = "London, uk";
 
