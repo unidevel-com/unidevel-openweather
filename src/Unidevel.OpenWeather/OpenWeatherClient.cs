@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Unidevel.OpenWeather
@@ -9,47 +9,34 @@ namespace Unidevel.OpenWeather
     {
         private readonly IConfiguration _configuration;
         private readonly string _apiKey;
-        private readonly HttpClient _httpClient;
 
-        public OpenWeatherClient(IConfiguration configuration = null, string apiKey = null, HttpClient httpClient = null)
+        public OpenWeatherClient(IConfiguration configuration = null, string apiKey = null)
         {
             _configuration = configuration;
-            _apiKey = apiKey ?? configuration?.GetSection("OpenWeather")?["ApiKey"];
-            _httpClient = httpClient ?? new HttpClient();
+            _apiKey = apiKey ?? configuration?.GetSection("OpenWeather")?["ApiKey"];            
         }
 
         public async Task<CurrentWeather> GetCurrentWeatherAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
         {
             var url = buildCurrentWeatherUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
-            try
-            {
-                var response = await _httpClient.GetStringAsync(url);
-                var currentWeather = Newtonsoft.Json.JsonConvert.DeserializeObject<CurrentWeather>(response);
-                return currentWeather;
-            }
-            catch (HttpRequestException e)
-            {
-                // Log or handle the error as needed
-                throw new Exception("Error fetching current weather data.", e);
-            }
+            string currentWeatherJson;
+            using (var webClient = new WebClient()) currentWeatherJson = await webClient.DownloadStringTaskAsync(url);
+
+            var currentWeather = Newtonsoft.Json.JsonConvert.DeserializeObject<CurrentWeather>(currentWeatherJson);
+
+            return currentWeather;
         }
 
         public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
         {
             var url = buildWeatherForecast5d3hUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
-            try
-            {
-                var response = await _httpClient.GetStringAsync(url);
-                var weatherForecast = Newtonsoft.Json.JsonConvert.DeserializeObject<WeatherForecast>(response);
-                return weatherForecast;
-            }
-            catch (HttpRequestException e)
-            {
-                // Log or handle the error as needed
-                throw new Exception("Error fetching weather forecast data.", e);
-            }
+            string weatherForecastJson;
+            using (var webClient = new WebClient()) weatherForecastJson = await webClient.DownloadStringTaskAsync(url);
+            var weatherForecast = Newtonsoft.Json.JsonConvert.DeserializeObject<WeatherForecast>(weatherForecastJson);
+
+            return weatherForecast;
         }
 
         private static readonly IFormatProvider americanNumberFormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-US").NumberFormat;
@@ -81,7 +68,7 @@ namespace Unidevel.OpenWeather
             {
                 if (cityId != Int32.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
 
-                return String.Format("q={0}", Uri.EscapeDataString(cityNameCountryCode));
+                return String.Format("q={0}", Uri.EscapeUriString(cityNameCountryCode));
             }
             else if (cityId != Int32.MinValue)
             {
@@ -93,7 +80,6 @@ namespace Unidevel.OpenWeather
 
         public void Dispose()
         {
-            _httpClient?.Dispose();
         }
     }
 }
