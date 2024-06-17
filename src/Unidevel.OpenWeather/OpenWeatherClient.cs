@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Unidevel.OpenWeather
@@ -9,82 +12,71 @@ namespace Unidevel.OpenWeather
     {
         private readonly IConfiguration _configuration;
         private readonly string _apiKey;
-        private bool _disposed = false;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        private readonly HttpClient _httpClient = new HttpClient();
-
-        public OpenWeatherClient(IConfiguration configuration = null, string apiKey = null)
+        public OpenWeatherClient(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
-            _configuration = configuration;
-            _apiKey = apiKey ?? configuration?.GetSection("OpenWeather")?["ApiKey"];
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _apiKey = _configuration.GetSection("OpenWeather")?["ApiKey"];
         }
 
-        public async Task<CurrentWeather> GetCurrentWeatherAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
+        public async Task<CurrentWeather> GetCurrentWeatherAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = int.MinValue, string apiKey = null)
         {
-            var url = buildCurrentWeatherUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
+            var url = BuildCurrentWeatherUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
-            try
-            {
-                var response = await _httpClient.GetStringAsync(url);
-                var currentWeather = Newtonsoft.Json.JsonConvert.DeserializeObject<CurrentWeather>(response);
-                return currentWeather;
-            }
-            catch (HttpRequestException)
-            {
-                throw;
-            }
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            var currentWeather = await httpClient.GetFromJsonAsync<CurrentWeather>(url);
+
+            return currentWeather;
         }
 
-        public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue, string apiKey = null)
+        public async Task<WeatherForecast> GetWeatherForecast5d3hAsync(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = int.MinValue, string apiKey = null)
         {
-            var url = buildWeatherForecast5d3hUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
+            var url = BuildWeatherForecast5d3hUrl(apiKey ?? _apiKey, longitude, latitude, cityNameCountryCode, cityId);
 
-            try
-            {
-                var response = await _httpClient.GetStringAsync(url);
-                var weatherForecast = Newtonsoft.Json.JsonConvert.DeserializeObject<WeatherForecast>(response);
-                return weatherForecast;
-            }
-            catch (HttpRequestException)
-            {
-                throw;
-            }
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            var weatherForecast = await httpClient.GetFromJsonAsync<WeatherForecast>(url);
+
+            return weatherForecast;
         }
 
-        private static readonly IFormatProvider americanNumberFormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-US").NumberFormat;
+        private static readonly IFormatProvider AmericanNumberFormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-US").NumberFormat;
 
-        private string buildCurrentWeatherUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        private static string BuildCurrentWeatherUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = int.MinValue)
         {
-            if (String.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
-            return String.Format("http://api.openweathermap.org/data/2.5/weather?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+            return $"http://api.openweathermap.org/data/2.5/weather?{BuildLocationPart(longitude, latitude, cityNameCountryCode, cityId)}&units=metric&appid={apiKey}";
         }
 
-        private string buildWeatherForecast5d3hUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        private static string BuildWeatherForecast5d3hUrl(string apiKey, float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = int.MinValue)
         {
-            if (String.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
-            return String.Format("http://api.openweathermap.org/data/2.5/forecast?{0}&units=metric&appid={1}", buildLocationPart(longitude, latitude, cityNameCountryCode, cityId), apiKey);
+            if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentException("Must not be null, empty or whitespace.", nameof(apiKey));
+            return $"http://api.openweathermap.org/data/2.5/forecast?{BuildLocationPart(longitude, latitude, cityNameCountryCode, cityId)}&units=metric&appid={apiKey}";
         }
 
-        private string buildLocationPart(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = Int32.MinValue)
+        private static string BuildLocationPart(float longitude = float.NaN, float latitude = float.NaN, string cityNameCountryCode = null, int cityId = int.MinValue)
         {
             if ((!float.IsNaN(longitude)) || (!float.IsNaN(latitude)))
             {
                 if (float.IsNaN(latitude)) throw new ArgumentException("Must be specified and not NaN when latitude provided.", nameof(longitude));
                 if (float.IsNaN(longitude)) throw new ArgumentException("Must be specified and not NaN when longitude provided.", nameof(latitude));
-                if (!String.IsNullOrWhiteSpace(cityNameCountryCode)) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityNameCountryCode));
-                if (cityId != Int32.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
+                if (!string.IsNullOrWhiteSpace(cityNameCountryCode)) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityNameCountryCode));
+                if (cityId != int.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
 
-                return String.Format(americanNumberFormatProvider, "lat={0}&lon={1}", latitude, longitude);
+                return $"lat={latitude.ToString(AmericanNumberFormatProvider)}&lon={longitude.ToString(AmericanNumberFormatProvider)}";
             }
             else if (cityNameCountryCode != null)
             {
-                if (cityId != Int32.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
+                if (cityId != int.MinValue) throw new ArgumentException("Must not be specified when coordinates provided.", nameof(cityId));
 
-                return String.Format("q={0}", Uri.EscapeDataString(cityNameCountryCode));
+                return $"q={Uri.EscapeDataString(cityNameCountryCode)}";
             }
-            else if (cityId != Int32.MinValue)
+            else if (cityId != int.MinValue)
             {
-                return String.Format("id={0}", cityId);
+                return $"id={cityId}";
             }
             else
                 throw new ArgumentException("Location information has not been provided.");
@@ -92,20 +84,6 @@ namespace Unidevel.OpenWeather
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _httpClient?.Dispose();
-                }
-                _disposed = true;
-            }
         }
     }
 }

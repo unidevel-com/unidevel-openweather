@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -8,92 +10,82 @@ namespace Unidevel.OpenWeather.Tests
 {
     public class OpenWeatherClient_GetWeatherForecast5d3h_Tests
     {
+        private readonly IConfigurationRoot _configuration;
+
+        public OpenWeatherClient_GetWeatherForecast5d3h_Tests()
+        {
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new KeyValuePair<string, string>[] { new("OpenWeather:ApiKey", Const.OpenWeatherApiKey) })
+                .Build();
+        }
+
         [Fact]
         public async Task ByLonLat_UseIConfiguration()
         {
-            var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("OpenWeather:ApiKey", Const.OpenWeatherApiKey) })
-                .Build();
+            using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+            var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                longitude: Const.SampleLongitude,
+                latitude: Const.SampleLatitude);
 
-            using (IOpenWeatherClient client = new OpenWeatherClient(config))
-            {
-                WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    longitude: Const.SampleLongitude,
-                    latitude: Const.SampleLatitude);
-
-                Assert.NotNull(weatherForecast);
-            }
+            Assert.NotNull(weatherForecast);
         }
 
         [Fact]
         public async Task ByLonLat_UseConstructorAppId()
         {
-            using (IOpenWeatherClient client = new OpenWeatherClient(apiKey: Const.OpenWeatherApiKey))
-            {
-                WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    longitude: Const.SampleLongitude,
-                    latitude: Const.SampleLatitude);
+            using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+            var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                longitude: Const.SampleLongitude,
+                latitude: Const.SampleLatitude);
 
-                Assert.NotNull(weatherForecast);
-            }
+            Assert.NotNull(weatherForecast);
         }
 
         [Fact]
         public async Task Err_ConstructorAppIdOverridesIConfiguration()
         {
-            var config = new ConfigurationBuilder()
-                .AddInMemoryCollection(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("OpenWeather:ApiKey", Const.OpenWeatherApiKey) })
-                .Build();
-
             await Assert.ThrowsAsync<System.Net.WebException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient(config, apiKey: "this-key-fails-for-sure"))
-                {
-                    WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        longitude: Const.SampleLongitude,
-                        latitude: Const.SampleLatitude);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    longitude: Const.SampleLongitude,
+                    latitude: Const.SampleLatitude,
+                    apiKey: "this-key-fails-for-sure");
             });
         }
 
         [Fact]
         public async Task ByLonLat()
         {
-            using (IOpenWeatherClient client = new OpenWeatherClient())
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
                     longitude: Const.SampleLongitude,
-                    latitude: Const.SampleLatitude,
-                    apiKey: Const.OpenWeatherApiKey);
-
-                Assert.NotNull(weatherForecast);
-            }
+                    latitude: Const.SampleLatitude);
+            });
         }
 
         [Fact]
         public async Task ByCityName()
         {
-            using (IOpenWeatherClient client = new OpenWeatherClient())
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                WeatherForecast weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    cityNameCountryCode: Const.SampleCityNameCountryCode,
-                    apiKey: Const.OpenWeatherApiKey);
-
-                Assert.NotNull(weatherForecast);
-            }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    cityNameCountryCode: Const.SampleCityNameCountryCode);
+            });
         }
 
         [Fact]
         public async Task ByCityId()
         {
-            using (IOpenWeatherClient client = new OpenWeatherClient())
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
                 var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                    cityId: Const.SampleCityId,
-                    apiKey: Const.OpenWeatherApiKey);
-
-                Assert.NotNull(weatherForecast);
-            }
+                    cityId: Const.SampleCityId);
+            });
         }
 
         [Fact]
@@ -101,12 +93,9 @@ namespace Unidevel.OpenWeather.Tests
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient())
-                {
-                    var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        longitude: Const.SampleLongitude,
-                        apiKey: Const.OpenWeatherApiKey);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    longitude: Const.SampleLongitude);
             });
         }
 
@@ -115,12 +104,9 @@ namespace Unidevel.OpenWeather.Tests
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient())
-                {
-                    var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        latitude: Const.SampleLatitude,
-                        apiKey: Const.OpenWeatherApiKey);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    latitude: Const.SampleLatitude);
             });
         }
 
@@ -129,14 +115,11 @@ namespace Unidevel.OpenWeather.Tests
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient())
-                {
-                    var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        longitude: Const.SampleLongitude,
-                        latitude: Const.SampleLatitude,
-                        cityNameCountryCode: Const.SampleCityNameCountryCode,
-                        apiKey: Const.OpenWeatherApiKey);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    longitude: Const.SampleLongitude,
+                    latitude: Const.SampleLatitude,
+                    cityNameCountryCode: Const.SampleCityNameCountryCode);
             });
         }
 
@@ -145,14 +128,11 @@ namespace Unidevel.OpenWeather.Tests
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient())
-                {
-                    var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        longitude: Const.SampleLongitude,
-                        latitude: Const.SampleLatitude,
-                        cityId: Const.SampleCityId,
-                        apiKey: Const.OpenWeatherApiKey);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    longitude: Const.SampleLongitude,
+                    latitude: Const.SampleLatitude,
+                    cityId: Const.SampleCityId);
             });
         }
 
@@ -161,14 +141,19 @@ namespace Unidevel.OpenWeather.Tests
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                using (IOpenWeatherClient client = new OpenWeatherClient())
-                {
-                    var weatherForecast = await client.GetWeatherForecast5d3hAsync(
-                        cityNameCountryCode: Const.SampleCityNameCountryCode,
-                        cityId: Const.SampleCityId,
-                        apiKey: Const.OpenWeatherApiKey);
-                }
+                using var client = new OpenWeatherClient(_configuration, CreateHttpClientFactory());
+                var weatherForecast = await client.GetWeatherForecast5d3hAsync(
+                    cityNameCountryCode: Const.SampleCityNameCountryCode,
+                    cityId: Const.SampleCityId);
             });
+        }
+
+        private static IHttpClientFactory CreateHttpClientFactory()
+        {
+            var services = new ServiceCollection();
+            services.AddHttpClient();
+            var serviceProvider = services.BuildServiceProvider();
+            return serviceProvider.GetRequiredService<IHttpClientFactory>();
         }
     }
 }
